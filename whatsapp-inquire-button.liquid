@@ -1,0 +1,299 @@
+
+{% doc %}
+  WhatsApp enquiry button for Shopify product pages.
+  Optimized for Shopify Online Store 2.0 / 3.0 compatible themes.
+  Designed for Ella Theme product information blocks.
+{% enddoc %}
+
+{% liquid
+  assign phone = block.settings.phone_number | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', '' | replace: '+', ''
+%}
+
+{% capture whatsapp_message %}
+{{ block.settings.custom_message }}
+{% if block.settings.include_product_info and product %}
+ 
+Product: {{ product.title }}
+Product URL: {{ shop.url }}{{ product.url }}
+{% endif %}
+{% endcapture %}
+
+{% liquid
+  assign whatsapp_message = whatsapp_message | strip | url_encode
+  assign whatsapp_url = 'https://wa.me/' | append: phone | append: '?text=' | append: whatsapp_message
+%}
+
+{% style %}
+  .whatsapp-enquiry-{{ block.id }} {
+    width: 100%;
+    margin-top: {{ block.settings.margin_top }}px;
+    margin-bottom: {{ block.settings.margin_bottom }}px;
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 18px;
+
+    box-sizing: border-box;
+
+    background: {{ block.settings.button_color }};
+    color: {{ block.settings.text_color }};
+
+    border: {{ block.settings.border_width }}px solid {{ block.settings.button_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+
+    font-family: inherit;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    line-height: 1.35;
+
+    text-align: center;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+      transform .18s ease,
+      box-shadow .18s ease,
+      opacity .18s ease;
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__button:hover {
+    background: {{ block.settings.button_color }};
+    color: {{ block.settings.text_color }};
+
+    transform: scale(1.012);
+
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, .12);
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__button:active {
+    transform: scale(.985);
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+
+    flex: 0 0 {{ block.settings.icon_size }}px;
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .whatsapp-enquiry-{{ block.id }}__text {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .whatsapp-enquiry-{{ block.id }}__button {
+      min-height: 46px;
+      padding: 11px 15px;
+      font-size: {{ block.settings.mobile_font_size }}px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whatsapp-enquiry-{{ block.id }}__button {
+      transition: none;
+    }
+
+    .whatsapp-enquiry-{{ block.id }}__button:hover,
+    .whatsapp-enquiry-{{ block.id }}__button:active {
+      transform: none;
+    }
+  }
+{% endstyle %}
+
+<div
+  class="whatsapp-enquiry-{{ block.id }}"
+  {{ block.shopify_attributes }}
+>
+  <a
+    class="whatsapp-enquiry-{{ block.id }}__button"
+    href="{{ whatsapp_url }}"
+    target="_blank"
+    rel="noopener noreferrer nofollow"
+    aria-label="{{ block.settings.button_text | escape }}"
+  >
+    <span
+      class="whatsapp-enquiry-{{ block.id }}__icon"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.15 1.6 5.96L.1 24l6.28-1.65a11.9 11.9 0 0 0 5.68 1.44h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.45-8.41ZM12.07 21.8h-.01a9.9 9.9 0 0 1-5.05-1.38l-.36-.21-3.73.98 1-3.64-.23-.37a9.9 9.9 0 0 1-1.52-5.28C2.17 6.4 6.6 1.97 12.06 1.97c2.64 0 5.12 1.03 6.99 2.91a9.82 9.82 0 0 1 2.9 7c0 5.46-4.43 9.92-9.88 9.92Zm5.43-7.43c-.3-.15-1.77-.87-2.05-.97-.28-.1-.49-.15-.7.15-.21.31-.8.97-.98 1.17-.18.21-.36.23-.66.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.74-1.65-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.36.45-.54.15-.18.2-.31.3-.51.1-.2.05-.38-.03-.53-.08-.15-.7-1.68-.96-2.3-.25-.6-.5-.52-.7-.53h-.6c-.2 0-.53.08-.8.38-.28.3-1.06 1.03-1.06 2.51s1.09 2.91 1.24 3.11c.15.2 2.15 3.28 5.21 4.6.73.32 1.3.51 1.75.65.74.23 1.41.2 1.94.12.59-.09 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.21-.57-.36Z"/>
+      </svg>
+    </span>
+
+    <span class="whatsapp-enquiry-{{ block.id }}__text">
+      {{ block.settings.button_text }}
+    </span>
+  </a>
+</div>
+
+{% schema %}
+{
+  "name": "WhatsApp Enquiry",
+  "settings": [
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "WhatsApp phone number",
+      "info": "Use country code without + or spaces. Example: 923104222259",
+      "default": "923104222259"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Enquire on WhatsApp"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_message",
+      "label": "WhatsApp message",
+      "info": "Do not enter /n or \\n. Line breaks are added automatically.",
+      "default": "Hi, I'm interested in this product. Please share the latest price and availability."
+    },
+    {
+      "type": "checkbox",
+      "id": "include_product_info",
+      "label": "Include product name and URL",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Desktop font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Mobile font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 21
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    }
+  ],
+  "presets": [
+    {
+      "name": "WhatsApp Enquiry"
+    }
+  ]
+}
+{% endschema %}
